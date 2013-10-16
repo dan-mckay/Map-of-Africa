@@ -29,9 +29,14 @@
           "fill": "#b9b9b9",
           "stroke": "#fff",
           "stroke-miterlimit": "4",
-          "stroke-width": "1",
-          "transform": "s0.06,0.06,60,0" // Scales the path to a useful size.
-        }; 
+          "stroke-width": "1.5",
+          "transform": "s0.05,0.05,60,0" // Scales the path to a useful size.
+        };
+
+        // Paragraph element to hold country name on mouse over;
+        var head = document.createElement('h1');
+        var container = document.getElementById('container');
+
         // Define map object. 
         var africaMap = {};
         for (var nation in africaPaths) {
@@ -41,12 +46,29 @@
           africaMap[nation].id = nation;
           // Name the element id after the africaPaths property name.
           africaMap[nation].node.id = nation;
+          
+          addCountryEvents(nation, head, container);
         }
         // For an example of interaction via Raphael, uncomment the line below.
-        // var demo1 = R.getById('tanzania').attr({"fill": "green"});
-        // For an example of interaction via javascript, uncomment the line below.
-        // var demo2 = document.getElementById('south_africa'); demo2.style.fill= "green";
+        // var demo1 = R.getById('Tanzania').attr({"fill": "yellow"});
       };
+
+      function addCountryEvents(nation, head, container) {
+        var country = document.getElementById(nation);
+        
+        country.addEventListener('mouseover', function() {
+          this.style.fill = "#bada55";
+          head.innerHTML = nation;
+          container.appendChild(head);
+        });
+
+        country.addEventListener('mouseout', function() {
+          this.style.fill = "#b9b9b9";
+          head.innerHTML = "";
+          container.removeChild(head);
+        });
+
+      }
     </script>
   </body>
 </html>
