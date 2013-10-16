@@ -8,23 +8,32 @@
        * Basic styles for container and hover states.
        */
       #container {
-        width: 620px;
-        height: 690px;
+        width: 520px;
+        height: 580px;
       }
+      /*
+        The following will work as a hover effect without JavaScript
+      */
+      /*
       #container path:hover {
         fill: #bada55;
+      }
+      */
+      body {
+        font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+        color: #5e5e5e; 
       }
     </style>
   </head>
   <body>
     <div id="container"></div><!-- html container for the map -->
 
-    <script src="js/raphael-min.js"></script><!-- load Raphael library -->
-    <script src="js/africa-paths.js"></script><!-- load our paths -->
+    <script src="../js/raphael-min.js"></script><!-- load Raphael library -->
+    <script src="../js/africa-paths.js"></script><!-- load our paths -->
     <script>
       window.onload = function () {
         // Create canvas and define attributes shared by all paths.
-        var R = Raphael("container", 620, 690),
+        var R = Raphael("container", 520, 580),
           attr = {
           "fill": "#b9b9b9",
           "stroke": "#fff",
@@ -33,7 +42,7 @@
           "transform": "s0.05,0.05,60,0" // Scales the path to a useful size.
         };
 
-        // Paragraph element to hold country name on mouse over;
+        // H1 element to hold country name on mouse over;
         var head = document.createElement('h1');
         var container = document.getElementById('container');
 
