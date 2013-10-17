@@ -23,10 +23,23 @@
         font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
         color: #5e5e5e; 
       }
+
+      .grabbing { 
+        cursor: url(../closedhand.cur), pointer !important; 
+      }
+
     </style>
   </head>
   <body>
     <div id="container"></div><!-- html container for the map -->
+
+    <link href="../../src/raphael.pan-zoom.css" rel="stylesheet" type="text/css" />
+    <link href="./style.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../../vendor/raphael-min.js"></script>
+    <script type="text/javascript" src="../../src/raphael.pan-zoom.min.js"></script>
+    <script type="text/javascript" src="./map.paths.js"></script>
+    <script type="text/javascript" src="./map.init.js"></script>
 
     <script src="../js/raphael-min.js"></script><!-- load Raphael library -->
     <script src="../js/africa-paths.js"></script><!-- load our paths -->
