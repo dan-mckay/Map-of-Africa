@@ -3,36 +3,20 @@
   <head>
     <meta charset="utf-8" />
     <title>An Interactive Map of Africa</title>
-    <style>
-      /**
-       * Basic styles for container and hover states.
-       */
-      #container {
-        width: 520px;
-        height: 580px;
-      }
-      /*
-        The following will work as a hover effect without JavaScript
-      */
-      /*
-      #container path:hover {
-        fill: #bada55;
-      }
-      */
-      body {
-        font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
-        color: #5e5e5e; 
-      }
-    </style>
-  </head>
-  <body>
-    <div id="container"></div><!-- html container for the map -->
-
-    <script src="../js/raphael-min.js"></script><!-- load Raphael library -->
-    <script src="../js/africa-paths.js"></script><!-- load our paths -->
-    <script src="../js/africa-paths.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/raphael-min.js"></script><!-- load Raphael library -->
+    <script type="text/javascript" src="../js/raphael.pan-zoom.js"></script>
+    <script type="text/javascript" src="../js/africa-paths.js"></script><!-- load our paths -->
+    <script type="text/javascript" src="../js/africa-paths.js"></script>
     <script>
-      window.onload = function () {
+      jQuery(function () {
+
+        // H1 element to hold country name on mouse over;
+        var head = document.createElement('h1');
+        var container = document.getElementById('container');
+        // Flag variable for zooming
+        var inDetails = false;
+
         // Create canvas and define attributes shared by all paths.
         var R = Raphael("container", 520, 580),
           attr = {
@@ -43,9 +27,14 @@
           "transform": "s0.05,0.05,60,0" // Scales the path to a useful size.
         };
 
-        // H1 element to hold country name on mouse over;
-        var head = document.createElement('h1');
-        var container = document.getElementById('container');
+        var panZoom = R.panzoom({ initialZoom: 0, initialPosition: { x: R.width / 2, y: R.height / 2}, maxZoom: 7 });
+        var isHandling = false;
+            
+        panZoom.enable();
+        R.safari();
+
+        var overlay = R.rect(0, 0, R.width, R.height);
+        overlay.attr({ fill: '#ffffff', 'fill-opacity': 0, "stroke-width": 0, stroke: '#ffffff' });
 
         // Define map object. 
         var africaMap = {};
@@ -61,7 +50,74 @@
         }
         // For an example of interaction via Raphael, uncomment the line below.
         // var demo1 = R.getById('Tanzania').attr({"fill": "yellow"});
-      };
+      
+        $("#mapContainer #up").click(function (e) {
+            panZoom.zoomIn(1);
+            e.preventDefault();
+        });
+
+        $("#mapContainer #down").click(function (e) {
+            panZoom.zoomOut(1);
+            e.preventDefault();
+        });
+        
+        $("#others #moveTopLeft").click(function (e) {
+            panZoom.pan(1,1);
+        });
+        
+            function animateOver() {
+            if (this.data("hoverFill")) {
+                this.attr("fill", this.data("hoverFill"));
+            }
+        }
+
+        function animateOut() {
+            if (this.data("fill")) {
+                this.attr("fill", this.data("fill"));
+            }
+        }
+        
+        function handleDetails() {
+            if (panZoom.isDragging() || isHandling) return;
+            isHandling = true;
+            var anim, box = this.getBBox();
+
+            if (inDetails) {
+                inDetails = false;
+                panZoom.enable();
+                this.hover(animateOver, animateOut);
+                anim = overlay.animate({ 'fill-opacity': 0 }, 300, function () { this.toBack(); isHandling = false; });
+                this.animateWith(overlay, anim, {
+                    transform: ""
+                }, 3000);
+                this.attr("fill", this.data("fill"));
+            }
+            else {
+                inDetails = true;
+                panZoom.disable();
+                this.unhover(animateOver, animateOut);
+                overlay.toFront();
+                this.toFront();
+
+                var currPaperPosition = panZoom.getCurrentPosition();
+                var currPaperZoom = panZoom.getCurrentZoom();
+
+                var currHeight = r.height * (1 - currPaperZoom * 0.1);
+
+                var zoomDif = (currHeight / 2) / box.height;
+
+                var xdif = currPaperPosition.x - box.x + ((box.width * zoomDif) - box.width) / 2;
+                var ydif = (currPaperPosition.y + ((currHeight / 2) - (box.height / 2))) - box.y;
+
+
+                anim = overlay.animate({ 'fill-opacity': 0.7 }, 300, function () { isHandling = false; });
+                this.animateWith(overlay, anim, {
+                    transform: "t" + xdif + "," + ydif + "s" + zoomDif
+                }, 300);
+            }
+        }
+
+      });
 
       function addCountryEvents(nation, head, container) {
         var country = document.getElementById(nation);
@@ -80,5 +136,34 @@
 
       }
     </script>
+    <style>
+      /**
+       * Basic styles for container and hover states.
+       */
+      #container {
+        width: 520px;
+        height: 580px;
+        border: 2px solid #5e5e5e;
+        margin: 20px auto;
+      }
+      /*
+        The following will work as a hover effect without JavaScript
+      */
+      /*
+      #container path:hover {
+        fill: #bada55;
+      }
+      */
+      body {
+        font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+        color: #5e5e5e; 
+        width: 1024px;
+        height: 728px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container"></div><!-- html container for the map -->
+
   </body>
 </html>
