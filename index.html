@@ -56,11 +56,15 @@
         var hammertime = $("#mapContainer").hammer();
       
         hammertime.on("pinchin", function (e) {
+            alert('pinchin');
+            e.gesture.preventDefault();
             panZoom.zoomIn(1);
             e.preventDefault();
         });
 
-        hammertime.on("pinchin", function (e) {
+        hammertime.on("pinchout", function (e) {
+            alert('pinchout');
+            e.gesture.preventDefault();
             panZoom.zoomOut(1);
             e.preventDefault();
         });
@@ -69,7 +73,7 @@
             panZoom.pan(1,1);
         });
         
-            function animateOver() {
+        function animateOver() {
             if (this.data("hoverFill")) {
                 this.attr("fill", this.data("hoverFill"));
             }
