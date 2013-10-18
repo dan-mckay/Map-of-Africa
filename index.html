@@ -29,7 +29,14 @@
           "transform": "s0.05,0.05,60,0" // Scales the path to a useful size.
         };
 
-        var panZoom = R.panzoom({ initialZoom: 0, initialPosition: { x: R.width / 2, y: R.height / 2}, maxZoom: 7 });
+        var panZoom = R.panzoom({ 
+          initialZoom: 0, 
+          initialPosition: {
+            x: R.width / 2, 
+            y: R.height / 2
+          }, 
+          maxZoom: 7 
+        });
         var isHandling = false;
             
         panZoom.enable();
@@ -162,6 +169,11 @@
         fill: #bada55;
       }
       */
+      html {
+        overflow-x: hidden;
+        overflow-y: hidden;
+      }
+
       body {
         font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
         color: #5e5e5e; 
