@@ -2,8 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
     <title>An Interactive Map of Africa</title>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="js/jquery.hammer.js"></script>
     <script type="text/javascript" src="js/raphael-min.js"></script><!-- load Raphael library -->
     <script type="text/javascript" src="js/raphael.pan-zoom.js"></script>
     <script type="text/javascript" src="js/africa-paths.js"></script><!-- load our paths -->
@@ -50,13 +52,15 @@
         }
         // For an example of interaction via Raphael, uncomment the line below.
         // var demo1 = R.getById('Tanzania').attr({"fill": "yellow"});
+
+        var hammertime = $("#mapContainer").hammer();
       
-        $("#mapContainer #up").click(function (e) {
+        hammertime.on("pinchin", function (e) {
             panZoom.zoomIn(1);
             e.preventDefault();
         });
 
-        $("#mapContainer #down").click(function (e) {
+        hammertime.on("pinchin", function (e) {
             panZoom.zoomOut(1);
             e.preventDefault();
         });
