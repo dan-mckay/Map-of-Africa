@@ -6,7 +6,7 @@
     <title>An Interactive Map of Africa</title>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
     <script type="text/javascript" src="js/jquery.hammer.js"></script>
-    <script type="text/javascript" src="js/raphael-min.js"></script><!-- load Raphael library -->
+    <script type="text/javascript" src="js/raphael.js"></script><!-- load Raphael library -->
     <script type="text/javascript" src="js/raphael.pan-zoom.js"></script>
     <script type="text/javascript" src="js/africa-paths.js"></script><!-- load our paths -->
     <script type="text/javascript" src="js/africa-paths.js"></script>
@@ -63,9 +63,9 @@
         var hammertime = $("#container").hammer();
       
         hammertime.on("pinchin", function (e) {
-            alert('pinchin');
+            alert(e.gesture);
             e.gesture.preventDefault();
-            panZoom.zoomIn(1);
+            panZoom.zoomIn(5);
             e.preventDefault();
         });
 
@@ -184,6 +184,9 @@
   </head>
   <body>
     <div id="container"></div><!-- html container for the map -->
-
+    <div id="mapContainer">
+        <div id="map"></div>
+        <div id="mapControls"><a id="up" href="javascript:;"></a><a id="down" href="javascript:;"></a></div>
+    </div>
   </body>
 </html>
