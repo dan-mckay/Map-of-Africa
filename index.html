@@ -66,14 +66,14 @@
             alert(e.gesture);
             e.gesture.preventDefault();
             panZoom.zoomIn(5);
-            e.preventDefault();
+            //e.preventDefault();
         });
 
         hammertime.on("pinchout", function (e) {
             alert('pinchout');
             e.gesture.preventDefault();
-            panZoom.zoomOut(1);
-            e.preventDefault();
+            panZoom.zoomOut(5);
+            //e.preventDefault();
         });
         
         $("#others #moveTopLeft").click(function (e) {
