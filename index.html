@@ -1,192 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
-    <title>An Interactive Map of Africa</title>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script type="text/javascript" src="js/jquery.hammer.js"></script>
-    <script type="text/javascript" src="js/raphael.js"></script><!-- load Raphael library -->
-    <script type="text/javascript" src="js/raphael.pan-zoom.js"></script>
-    <script type="text/javascript" src="js/africa-paths.js"></script><!-- load our paths -->
-    <script type="text/javascript" src="js/africa-paths.js"></script>
-    <script>
-      jQuery(function () {
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Map</title>
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script type="text/javascript" src="js/raphael.js"></script>
+  <script type="text/javascript" src="js/raphael.pan-zoom.js"></script>
+  <script type="text/javascript" src="js/map.paths.js"></script>
+  <script type="text/javascript" src="js/map.init.js"></script>
+  <style type="text/css" media="screen">
+    #mapContainer { background: #f0000; border: 1px solid #ccc; height: 580px; position: relative; width: 520px; overflow: hidden; }
+    #mapContainer #map { height: 580px; width: 520px; }
+    #mapContainer #mapControls { position: absolute; left: 15px; top: 15px; width: 29px; }
+    #mapContainer #mapControls #up { background: url(iconUp.png) no-repeat center top; display: block; height: 26px; width: 29px; }
+    #mapContainer #mapControls #down { background: url(iconDown.png) no-repeat center top; display: block; height: 27px; width: 29px; } 
+    .grabbing { cursor: url(closedhand.cur), pointer !important; }
+  </style>
+</head>
 
-        // H1 element to hold country name on mouse over;
-        var head = document.createElement('h1');
-        var container = document.getElementById('container');
-        // Flag variable for zooming
-        var inDetails = false;
+<body>
+  
+  <div id="mapContainer">
+    <div id="map"></div>
+    <div id="mapControls"><a id="up" href="javascript:;"></a><a id="down" href="javascript:;"></a></div>
+  </div>
+</body>
 
-        // Create canvas and define attributes shared by all paths.
-        var R = Raphael("container", 520, 580),
-          attr = {
-          "fill": "#b9b9b9",
-          "stroke": "#fff",
-          "stroke-miterlimit": "4",
-          "stroke-width": "1.5",
-          "transform": "s0.05,0.05,60,0" // Scales the path to a useful size.
-        };
-
-        var panZoom = R.panzoom({ 
-          initialZoom: 0, 
-          initialPosition: {
-            x: R.width / 2, 
-            y: R.height / 2
-          }, 
-          maxZoom: 7 
-        });
-        var isHandling = false;
-            
-        panZoom.enable();
-        R.safari();
-
-        var overlay = R.rect(0, 0, R.width, R.height);
-        overlay.attr({ fill: '#ffffff', 'fill-opacity': 0, "stroke-width": 0, stroke: '#ffffff' });
-
-        // Define map object. 
-        var africaMap = {};
-        for (var nation in africaPaths) {
-          // Draw a path, then apply attributes to it.
-          africaMap[nation] = R.path(africaPaths[nation]).attr(attr);
-          // Name the internal Raphael id after the africaPaths property name.
-          africaMap[nation].id = nation;
-          // Name the element id after the africaPaths property name.
-          africaMap[nation].node.id = nation;
-          
-          addCountryEvents(nation, head, container);
-        }
-        // For an example of interaction via Raphael, uncomment the line below.
-        // var demo1 = R.getById('Tanzania').attr({"fill": "yellow"});
-
-        var hammertime = $("#container").hammer();
-      
-        hammertime.on("pinchin", function (e) {
-            alert(e.gesture);
-            e.gesture.preventDefault();
-            panZoom.zoomIn(5);
-            //e.preventDefault();
-        });
-
-        hammertime.on("pinchout", function (e) {
-            alert('pinchout');
-            e.gesture.preventDefault();
-            panZoom.zoomOut(5);
-            //e.preventDefault();
-        });
-        
-        $("#others #moveTopLeft").click(function (e) {
-            panZoom.pan(1,1);
-        });
-        
-        function animateOver() {
-            if (this.data("hoverFill")) {
-                this.attr("fill", this.data("hoverFill"));
-            }
-        }
-
-        function animateOut() {
-            if (this.data("fill")) {
-                this.attr("fill", this.data("fill"));
-            }
-        }
-        
-        function handleDetails() {
-            if (panZoom.isDragging() || isHandling) return;
-            isHandling = true;
-            var anim, box = this.getBBox();
-
-            if (inDetails) {
-                inDetails = false;
-                panZoom.enable();
-                this.hover(animateOver, animateOut);
-                anim = overlay.animate({ 'fill-opacity': 0 }, 300, function () { this.toBack(); isHandling = false; });
-                this.animateWith(overlay, anim, {
-                    transform: ""
-                }, 3000);
-                this.attr("fill", this.data("fill"));
-            }
-            else {
-                inDetails = true;
-                panZoom.disable();
-                this.unhover(animateOver, animateOut);
-                overlay.toFront();
-                this.toFront();
-
-                var currPaperPosition = panZoom.getCurrentPosition();
-                var currPaperZoom = panZoom.getCurrentZoom();
-
-                var currHeight = r.height * (1 - currPaperZoom * 0.1);
-
-                var zoomDif = (currHeight / 2) / box.height;
-
-                var xdif = currPaperPosition.x - box.x + ((box.width * zoomDif) - box.width) / 2;
-                var ydif = (currPaperPosition.y + ((currHeight / 2) - (box.height / 2))) - box.y;
-
-
-                anim = overlay.animate({ 'fill-opacity': 0.7 }, 300, function () { isHandling = false; });
-                this.animateWith(overlay, anim, {
-                    transform: "t" + xdif + "," + ydif + "s" + zoomDif
-                }, 300);
-            }
-        }
-
-      });
-
-      function addCountryEvents(nation, head, container) {
-        var country = document.getElementById(nation);
-        
-        country.addEventListener('mouseover', function() {
-          this.style.fill = "#bada55";
-          head.innerHTML = nation;
-          container.appendChild(head);
-        });
-
-        country.addEventListener('mouseout', function() {
-          this.style.fill = "#b9b9b9";
-          head.innerHTML = "";
-          container.removeChild(head);
-        });
-
-      }
-    </script>
-    <style>
-      /**
-       * Basic styles for container and hover states.
-       */
-      #container {
-        width: 520px;
-        height: 580px;
-        border: 2px solid #5e5e5e;
-        margin: 20px auto;
-      }
-      /*
-        The following will work as a hover effect without JavaScript
-      */
-      /*
-      #container path:hover {
-        fill: #bada55;
-      }
-      */
-      html {
-        overflow-x: hidden;
-        overflow-y: hidden;
-      }
-
-      body {
-        font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
-        color: #5e5e5e; 
-        width: 1024px;
-        height: 728px;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="container"></div><!-- html container for the map -->
-    <div id="mapContainer">
-        <div id="map"></div>
-        <div id="mapControls"><a id="up" href="javascript:;"></a><a id="down" href="javascript:;"></a></div>
-    </div>
-  </body>
 </html>
